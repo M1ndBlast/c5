@@ -1,5 +1,4 @@
-mapa_mexico/
-mapa_mexico_sectores/
-
-tendencia_trimestral/
-geolocalizacion/
+mapa_*/
+tendencia_*/
+heatmap_*/
+geomap_*/
