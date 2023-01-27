@@ -4,3 +4,7 @@ heatmap_*/
 geomap_*/
 __pycache__
 MNIST_data
+
+# Ignore all node project files
+node_modules
+package*.json
