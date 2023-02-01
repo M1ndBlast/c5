@@ -1,8 +1,12 @@
-mapa_*/
 maps/
+correlaciones/
+screenshots/
+mapa_*/
 tendencia_*/
 heatmap_*/
 geomap_*/
+
+
 __pycache__
 MNIST_data
 
