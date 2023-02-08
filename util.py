@@ -15,7 +15,7 @@ def load_data():
 		df_delitos = df_delitos[df_delitos.fecha_creacion != '2021-12-31'] # Remove rows with date 2021-12-31
 
 		"""
-			Drop rows where incidentes_c4 is
+			Save rows where incidentes_c4 is
 			['Robo-Vehículo sin Violencia', 'Robo-Vehiculo con Violencia',
 			'Agresión-Persona', 'Denuncia-Persona Sospechosa',
 			'Disturbio-Concentración de Personas', 'Disturbio-Disparos',
@@ -24,13 +24,13 @@ def load_data():
 			'Robo-Establecimiento sin Violencia', 'Robo-Transeúnte',
 			'Abandono-Vehículo']
 		"""
-		df_delitos = df_delitos[not df_delitos['incidente_c4'].isin(['Robo-Vehículo sin Violencia', 'Robo-Vehiculo con Violencia',
-			'Agresión-Persona', 'Denuncia-Persona Sospechosa',
-			'Disturbio-Concentración de Personas', 'Disturbio-Disparos',
-			'Robo-Auto partes', 'Robo-Automovilista',
-			'Robo-Establecimiento con Violencia',
-			'Robo-Establecimiento sin Violencia', 'Robo-Transeúnte',
-			'Abandono-Vehículo'])]
+		df_delitos = df_delitos[df_delitos['incidente_c4'].isin(['Robo-Vehículo sin Violencia', 'Robo-Vehiculo con Violencia',
+				'Agresión-Persona', 'Denuncia-Persona Sospechosa',
+				'Disturbio-Concentración de Personas', 'Disturbio-Disparos',
+				'Robo-Auto partes', 'Robo-Automovilista',
+				'Robo-Establecimiento con Violencia',
+				'Robo-Establecimiento sin Violencia', 'Robo-Transeúnte',
+				'Abandono-Vehículo'])]
 
 		"""
 			Save columns and drop the ones that are not needed
@@ -49,6 +49,7 @@ def load_data():
 		df_delitos['año_creacion'] = df_delitos['fecha_creacion'].dt.year
 		df_delitos['mes_creacion'] = df_delitos['fecha_creacion'].dt.month
 		df_delitos['dia_creacion'] = df_delitos['fecha_creacion'].dt.day
+		df_delitos['dia_semana'] = df_delitos['fecha_creacion'].dt.dayofweek
 		df_delitos['semana_creacion'] = df_delitos['fecha_creacion'].dt.week
 		# Remove YYYY-MM-DD in field hora_creacion
 		df_delitos['hora_creacion'] = df_delitos['hora_creacion'].str[11:13]+':00'
@@ -89,22 +90,15 @@ def preprocess_data(df_incidentes, df_camaras):
 
 		center = (cam.LATITUD, cam.LONGITUD) # latitud y longitud del punto central
 		
-		radius = 100 # 100m en latitud y longitud = (0.0009, 0.0009)
-		
-		df_aux = df_incidentes[(df_incidentes['latitud'] >= cam.LATITUD-0.0009) & (df_incidentes['latitud'] <= cam.LATITUD+0.0009) 
+		radius = 100 # 100m en latitud y longitud = (0.0009, 0.0009) 
+
+		df_quadrant = df_incidentes[(df_incidentes['latitud'] >= cam.LATITUD-0.0009) & (df_incidentes['latitud'] <= cam.LATITUD+0.0009) 
 					& (df_incidentes['longitud'] >= cam.LONGITUD-0.0009) & (df_incidentes['longitud'] <= cam.LONGITUD+0.0009)]
 
-		df_aux = df_aux[[distance.distance(center, (lat, lon)).m <= radius for lat, lon in zip(df_aux['latitud'], df_aux['longitud'])]]
+		df_quadrant = df_quadrant[[distance.distance(center, (lat, lon)).m <= radius for lat, lon in zip(df_quadrant['latitud'], df_quadrant['longitud'])]]
 
-		df_aux['id_camara'] = cam.ID_BCT_O
+		df_quadrant['id_camara'] = cam.ID_BCT_O
 
-		dataset = pd.concat([dataset, df_aux], ignore_index=True)
+		dataset = pd.concat([dataset, df_quadrant], ignore_index=True)
 		dataset.to_pickle('dataset.pkl')
 	return dataset
-
-def main():
-	df_delitos, df_camaras = load_data()
-	dataset = preprocess_data(df_delitos, df_camaras)
-
-if __name__ == '__main__':
-	main()
