@@ -85,7 +85,7 @@ def load_data():
 	return df_delitos, df_camaras
 
 
-def preprocess_data(df_incidentes, df_camaras):
+def preprocess_data(df_incidentes, df_camaras)->pd.DataFrame:
 
 	if os.path.exists('dataset.pkl'):
 		dataset = pd.read_pickle('dataset.pkl')
