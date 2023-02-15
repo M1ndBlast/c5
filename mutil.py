@@ -111,3 +111,10 @@ def preprocess_data(df_incidentes, df_camaras)->pd.DataFrame:
 			dataset = pd.concat([dataset, df_quadrant], ignore_index=True)
 			dataset.to_pickle('dataset.pkl')
 	return dataset
+
+
+def fill_data(df_count, fill_camera, fill_values=0, start_date='2022-01-01', end_date='2023-01-31'):
+	df_count = df_count.set_index('fecha_creacion').reindex(pd.date_range(start=start_date, end=end_date)).reset_index().rename(columns={'index': 'fecha_creacion'})
+	df_count['count'] = df_count['count'].fillna(fill_values)
+	df_count['id_camara'] = df_count['id_camara'].fillna(fill_camera)
+	return df_count
