@@ -1,15 +1,16 @@
-# Load dataset delitos_2022.xlsx for training and delitos_2023.xlsx for testing
-
 import os
 import pandas as pd
 from geopy import distance
 
+# Load dataset delitos_2022.xlsx for training and delitos_2023.xlsx for testing
+PATH_DATA = '../data/'
+
 def load_data():
 	# Load delitos dataset
-	if os.path.exists('delitos.pkl'):
-		df_delitos = pd.read_pickle('delitos.pkl')
+	if os.path.exists(PATH_DATA+'delitos.pkl'):
+		df_delitos = pd.read_pickle(PATH_DATA+'delitos.pkl')
 	else:
-		df_delitos = pd.concat([pd.read_excel('delitos_2022.xlsx'), pd.read_excel('delitos_2023.xlsx')], ignore_index=True)
+		df_delitos = pd.concat([pd.read_excel(PATH_DATA+'delitos_2022.xlsx'), pd.read_excel(PATH_DATA+'delitos_2023.xlsx')], ignore_index=True)
 
 		df_delitos['fecha_creacion'] = df_delitos['fecha_creacion'].str.replace('/', '-')
 
@@ -67,13 +68,13 @@ def load_data():
 		df_delitos['latitud'] = df_delitos['latitud'].astype(float)
 		df_delitos['longitud'] = df_delitos['longitud'].astype(float)
 
-		df_delitos.to_pickle('delitos.pkl')
+		df_delitos.to_pickle(PATH_DATA+'delitos.pkl')
 	## Load camaras dataset
 
-	if os.path.exists('camaras.pkl'):
-		df_camaras = pd.read_pickle('camaras.pkl')
+	if os.path.exists(PATH_DATA+'camaras.pkl'):
+		df_camaras = pd.read_pickle(PATH_DATA+'camaras.pkl')
 	else:	
-		df_camaras = pd.read_excel('camaras_01.2023.xlsx', dtype=str, sheet_name='BASE')
+		df_camaras = pd.read_excel(PATH_DATA+'camaras_01.2023.xlsx', dtype=str, sheet_name='BASE')
 
 		df_camaras = df_camaras[['ID_BCT_O','latitud','longitud']]
 		df_camaras.rename(columns={'latitud':'latitud','longitud':'longitud'}, inplace=True) #rename columns latitud,longitud to lower case 
@@ -81,14 +82,14 @@ def load_data():
 		# convertir a float las columnas "latitud,longitud" de df_camaras
 		df_camaras.latitud = df_camaras.latitud.astype(float)
 		df_camaras.longitud = df_camaras.longitud.astype(float)
-		df_camaras.to_pickle('camaras.pkl')
+		df_camaras.to_pickle(PATH_DATA+'camaras.pkl')
 	return df_delitos, df_camaras
 
 
 def preprocess_data(df_incidentes, df_camaras)->pd.DataFrame:
 
-	if os.path.exists('dataset.pkl'):
-		dataset = pd.read_pickle('dataset.pkl')
+	if os.path.exists(PATH_DATA+'dataset.pkl'):
+		dataset = pd.read_pickle(PATH_DATA+'dataset.pkl')
 	else:
 		# create a new dataframe with the columns of df 
 		dataset = pd.DataFrame(columns=df_incidentes.columns)
@@ -109,7 +110,7 @@ def preprocess_data(df_incidentes, df_camaras)->pd.DataFrame:
 			df_quadrant['id_camara'] = cam.ID_BCT_O
 
 			dataset = pd.concat([dataset, df_quadrant], ignore_index=True)
-			dataset.to_pickle('dataset.pkl')
+			dataset.to_pickle(PATH_DATA+'dataset.pkl')
 	return dataset
 
 
