@@ -12,12 +12,14 @@ def load_data():
 	else:
 		df_delitos = pd.concat([pd.read_excel(PATH_DATA+'delitos_2022.xlsx'), pd.read_excel(PATH_DATA+'delitos_2023.xlsx')], ignore_index=True)
 
-		df_delitos['fecha_creacion'] = df_delitos['fecha_creacion'].str.replace('/', '-')
-
-		print("Archivo leido")
-
+		df_delitos['fecha_creacion'] = pd.to_datetime(df_delitos['fecha_creacion'], format='%Y-%m-%d')
+		df_delitos['hora_creacion'].replace(regex=True, inplace=True, to_replace=r'^[\d\-]+ ', value=r'')
+		df_delitos['hora_creacion'] = pd.to_datetime(df_delitos['hora_creacion'], format='%H:%M:%S')
+		df_delitos['fecha_creacion'] = df_delitos['fecha_creacion'] + (df_delitos['hora_creacion'] - df_delitos['hora_creacion'].min())
+		
 		df_delitos = df_delitos[df_delitos['codigo_cierre'] == 'A'] # Solo considerar los registros que tengan "A" (Afirmativo) en la columna codigo_cierre
-		df_delitos = df_delitos[df_delitos.fecha_creacion != '2021-12-31'] # Remove rows with date 2021-12-31
+	
+		df_delitos = df_delitos[df_delitos['fecha_creacion'].dt.year >= 2022]
 
 		"""
 			Save rows where incidentes_c4 is
@@ -45,6 +47,7 @@ def load_data():
 			'sector_inicio', 'latitud', 'longitud']
 		"""
 		df_delitos = df_delitos[[
+			'folio',
 			'fecha_creacion', 'hora_creacion', 'incidente_c4', 
 			'colonia', 'delegacion_inicio', 'sector_inicio', 
 			'latitud', 'longitud'
@@ -55,14 +58,12 @@ def load_data():
 		df_delitos['id_camara'] = ''
 
 		# Remove YYYY-MM-DD in field fecha_creacion
-		df_delitos['fecha_creacion'] = pd.to_datetime(df_delitos['fecha_creacion'], format='%Y-%m-%d')
 		df_delitos['año_creacion'] = df_delitos['fecha_creacion'].dt.year
 		df_delitos['mes_creacion'] = df_delitos['fecha_creacion'].dt.month
 		df_delitos['dia_creacion'] = df_delitos['fecha_creacion'].dt.day
 		df_delitos['dia_semana'] = df_delitos['fecha_creacion'].dt.dayofweek
 		df_delitos['semana_creacion'] = df_delitos['fecha_creacion'].dt.isocalendar().week
-		# Remove YYYY-MM-DD in field hora_creacion
-		df_delitos['hora_creacion'] = df_delitos['hora_creacion'].str[11:13]+':00'
+		df_delitos['hora_creacion'] = df_delitos['hora_creacion'].dt.hour
 		
 		# convert latitud and longitud to float
 		df_delitos['latitud'] = df_delitos['latitud'].astype(float)
