@@ -56,14 +56,6 @@ def load_data():
 
 		# Create a new column named camera id empty
 		df_delitos['id_camara'] = ''
-
-		# Remove YYYY-MM-DD in field fecha_creacion
-		df_delitos['año_creacion'] = df_delitos['fecha_creacion'].dt.year
-		df_delitos['mes_creacion'] = df_delitos['fecha_creacion'].dt.month
-		df_delitos['dia_creacion'] = df_delitos['fecha_creacion'].dt.day
-		df_delitos['dia_semana'] = df_delitos['fecha_creacion'].dt.dayofweek
-		df_delitos['semana_creacion'] = df_delitos['fecha_creacion'].dt.isocalendar().week
-		df_delitos['hora_creacion'] = df_delitos['hora_creacion'].dt.hour
 		
 		# convert latitud and longitud to float
 		df_delitos['latitud'] = df_delitos['latitud'].astype(float)
