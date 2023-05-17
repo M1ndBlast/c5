@@ -7,7 +7,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 # Leemos los datos del archivo \\C4wadpninv004\ANALISIS II-DGGE\02. SME\GUSTAVO\B200m_CONSIGNADAS.csv
-DIR_PATH = '\\\\C4wadpninv004\\ANALISIS II-DGGE\\02. SME\\GUSTAVO\\'
+# DIR_PATH = '\\\\C4wadpninv004\\ANALISIS II-DGGE\\02. SME\\GUSTAVO\\'
+DIR_PATH = 'data\\'
 FILE_PATH = DIR_PATH + 'B200m_CONSIGNADAS.csv'
 data = pd.read_csv(FILE_PATH, sep=',', encoding='latin-1')
 
@@ -20,9 +21,9 @@ agrupaciones = [['C09-CUARTELES DE LA POLICÍA AUXILIAR','C10-CUARTELES PBI','C1
 
 ['C22-MONUMENTOS HISTORICOS', 'C57-EVENTOS MASIVOS', 'C73-ATRACTIVOS TURISTICOS', 'C78-ZONAS ARQUEOLOGICAS',],
 
-['C58-CASAS Y CENTROS DE CULTURA','C59-MUSEOS Y TEATROS','C75-FONOTECAS','C76-FOTOTECA','C77-GALERIAS', 'C26-PARQUES Y RECREACION',],
+['C58-CASAS Y CENTROS DE CULTURA','C59-MUSEOS Y TEATROS','C75-FONOTECAS','C76-FOTOTECA','C77-GALERIAS', 'C26-PLAZAS Y PARQUES',],
 
-['C23-NOTARIAS','C24-OFICINAS DE GOBIERNO','C27-RECLUSORIOS','C30-TESORERIAS','C82-ALCALDIAS', 'C01-BANCOS Y CAJEROS'],
+['C23-NOTARIAS','C24-OFICINAS DE GOBIERNO','C27-RECLUSORIOS','C30-TESORERIAS','C82-ALCALDIAS', 'C01-BANCOS'],
 
 ['C15-HOSPITALES','C45-CENTROS DE SALUD Y CLINICAS',],
 
@@ -37,6 +38,9 @@ for i in range(len(agrupaciones)):
 	data['GRUPO-'+str(i+1)] = data[agrupaciones[i]].sum(axis=1)
 	# Eliminamos las columnas que ya no se van a utilizar
 	data = data.drop(agrupaciones[i], axis=1)
+
+# Eliminamos las columnas que no se van a utilizar
+data = data.drop(['FECHA', 'HORA', 'DELITO', 'COLONIA', 'CALLE', 'ENTRE_CALLE1', 'ENTRE_CALLE2', 'TIPO', 'MODALIDAD', 'ARMA', 'SEXO', 'EDAD', 'CONDICION', 'NACIONALIDAD', 'MES', 'AÑO', 'FECHA_HECHO', 'HORA_HECHO', 'ALIAS', 'CALIDAD_JURIDICA', 'SITUACION_JURIDICA', 'MES_NOMBRE', 'AÑO-MES', 'AÑO-MES-DIA', 'AÑO-MES-DIA-HORA', 'AÑO-MES-DIA-HORA-MINUTO', 'AÑO-MES-DIA-HORA-MINUTO-SEGUNDO'], axis=1)
 
 # Normalizar los datos
 scaler = StandardScaler()
