@@ -9,6 +9,7 @@ geomap_*/
 
 __pycache__
 MNIST_data
+models/*
 
 # Ignore all node project files
 node_modules
